@@ -1,6 +1,6 @@
-# Advent Of Code 2020
+# Advent Of Code
 
 This repository holds my code to complete the challenges for the
-advent of code 2020.
+advent of code.
 
 https://adventofcode.com

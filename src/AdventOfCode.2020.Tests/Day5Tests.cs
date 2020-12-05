@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,6 +76,31 @@ namespace AdventOfCode.Tests
 			var input = await File.ReadAllLinesAsync("Inputs/day5input.txt");
 
 			Console.WriteLine(input.Select(line => SeatGuesser(line)).Max(seat => seat.Item3));
+		}
+
+		[TestMethod]
+		public async Task SeatFinderTask()
+		{
+			var input = await File.ReadAllLinesAsync("Inputs/day5input.txt");
+
+			var seats = input.Select(line => SeatGuesser(line)).OrderBy(seat => seat.Item3).ToList();
+
+			var currentSeat = -1;
+			int possibleSeat = 0;
+			seats.ForEach(seat =>
+			{
+				if (currentSeat == -1)
+				{
+					currentSeat = seat.Item3;
+				}
+				else if (currentSeat >= 0 && currentSeat + 1 != seat.Item3)
+				{
+					possibleSeat = currentSeat + 1;
+				}
+				currentSeat = seat.Item3;
+			});
+
+			Console.WriteLine($"Found seat: {possibleSeat}");
 		}
 	}
 }

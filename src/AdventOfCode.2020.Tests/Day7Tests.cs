@@ -63,6 +63,20 @@ namespace AdventOfCode.Tests
 			return count;
         }
 
+		public int CountMustHold(BagRule currentBagRule, List<BagRule> baggageRules)
+		{
+			int count = 0;
+			foreach (var hold in currentBagRule.BagHolds)
+			{
+				count += hold.Count;
+
+				var rule = baggageRules.Where(q => q.Colour == hold.Colour.Trim()).FirstOrDefault();
+
+				count += CountMustHold(rule, baggageRules) * hold.Count;
+			}
+			return count;
+		}
+
 		[TestMethod]
 		public void BagCountainsTest()
 		{
@@ -107,7 +121,43 @@ dotted black bags contain no other bags.".Split("\r\n"));
 				}
 			}
 
-            Console.WriteLine($"Amount of bags that can hold a {colour} bag are: {count}");
+			Console.WriteLine($"Amount of bags that can hold a {colour} bag are: {count}");
+		}
+
+		[TestMethod]
+		public void BagMustCountainTest()
+		{
+			var input = @"shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.".Split("\r\n");
+			var colour = "shiny gold";
+
+			var baggageRules = BaggageRules(input);
+
+			int count = 0;
+
+			count += CountMustHold(baggageRules.Where(q => q.Colour == colour).First(), baggageRules);
+
+			Assert.AreEqual(126, count);
+		}
+
+		[TestMethod]
+		public async Task BagMustCountainTask()
+		{
+			var input = await File.ReadAllLinesAsync("Inputs/day7input.txt");
+			var colour = "shiny gold";
+
+			var baggageRules = BaggageRules(input);
+
+			int count = 0;
+
+			count += CountMustHold(baggageRules.Where(q => q.Colour == colour).First(), baggageRules);
+
+			Console.WriteLine($"Amount of bags that the {colour} bag must hold are: {count}");
 		}
 	}
 }

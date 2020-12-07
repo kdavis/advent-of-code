@@ -11,16 +11,16 @@ namespace AdventOfCode.Tests
 	public class Day7Tests
 	{
 		public class BagHold
-        {
+		{
 			public int Count { get; set; }
 			public string Colour { get; set; }
-        }
+		}
 
 		public class BagRule
-        {
+		{
 			public string Colour { get; set; }
 			public List<BagHold> BagHolds { get; set; }
-        }
+		}
 
 		public List<BagRule> BaggageRules(string[] input)
 		{
@@ -32,13 +32,13 @@ namespace AdventOfCode.Tests
 				{
 					Colour = ruleSide[0],
 					BagHolds = ruleSide[1][..^1] == "no other bags" ? new List<BagHold>() : ruleSide[1][..^1].Split(", ").Select(colour =>
-                    {
+					{
 						return new BagHold
 						{
 							Count = int.Parse(colour[..colour.IndexOf(" ")]),
 							Colour = colour[colour.IndexOf(" ")..colour.IndexOf(" bag")]
 						};
-                    }).ToList()
+					}).ToList()
 				};
 			}).ToList();
 
@@ -46,22 +46,22 @@ namespace AdventOfCode.Tests
 		}
 
 		public int CountCanHold(string searchBagColour, BagRule currentBagRule, List<BagRule> baggageRules)
-        {
+		{
 			int count = 0;
 			foreach (var hold in currentBagRule.BagHolds)
-            {
+			{
 				var thisColour = hold.Colour.Trim();
 				if (thisColour == searchBagColour)
-                {
+				{
 					count += hold.Count;
-                }
+				}
 				else
-                {
+				{
 					count += CountCanHold(searchBagColour, baggageRules.Where(q => q.Colour == thisColour).FirstOrDefault(), baggageRules);
 				}
-            }
+			}
 			return count;
-        }
+		}
 
 		public int CountMustHold(BagRule currentBagRule, List<BagRule> baggageRules)
 		{

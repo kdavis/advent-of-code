@@ -25,7 +25,7 @@ namespace AdventOfCode.Tests
 			var distinctGroupAnswers = new List<List<char>>();
 
 			foreach (var group in groups)
-            {
+			{
 				var answers = group.Split("\r\n").Where(q => !string.IsNullOrEmpty(q));
 
 				var allCharacters = answers.SelectMany(q => q.ToList()).Distinct();

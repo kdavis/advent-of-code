@@ -59,6 +59,64 @@ namespace AdventOfCode.Tests
 			return string.Join("\r\n", takenSeats.Select(q => string.Join("", q)));
 		}
 
+		public char RaytraceDirection(List<List<char>> seats, int directionX, int directionY, int startX, int startY)
+		{
+			if (directionX == 0 && directionY == 0)
+			{
+				return '.';
+			}
+
+			var x = startX + directionX;
+			var y = startY + directionY;
+
+			try
+			{
+				while (seats[x][y] == '.')
+				{
+					x += directionX;
+					y += directionY;
+				}
+			}
+			catch (Exception)
+			{
+				return '.';
+			}
+
+			return seats[x][y];
+		}
+
+		public string RaytraceSeatFinder(string input)
+		{
+			var seats = input.Split("\r\n").Select(q => q.ToList()).ToList();
+			var takenSeats = new List<List<char>>(seats.Select(q => new List<char>(q)));
+
+			for (var row = 0; row < seats.Count; row++)
+			{
+				for (var column = 0; column < seats[row].Count; column++)
+				{
+					var surroundings = new List<char>();
+					for (var diffX = -1; diffX <= 1; diffX++)
+					{
+						for (var diffY = -1; diffY <= 1; diffY++)
+						{
+							surroundings.Add(RaytraceDirection(seats, diffX, diffY, row, column));
+						}
+					}
+
+					if (seats[row][column] == '#' && surroundings.Count(q => q == '#') >= 5)
+					{
+						takenSeats[row][column] = 'L';
+					}
+					if (seats[row][column] == 'L' && surroundings.Count(q => q == '#') == 0)
+					{
+						takenSeats[row][column] = '#';
+					}
+				}
+			}
+
+			return string.Join("\r\n", takenSeats.Select(q => string.Join("", q)));
+		}
+
 		[TestMethod]
 		public void SeatFinderTest()
 		{
@@ -226,6 +284,25 @@ L.#.L..#..
 			while (true)
 			{
 				var newGrid = SeatFinder(prevGrid);
+				if (prevGrid == newGrid)
+				{
+					break;
+				}
+				prevGrid = newGrid;
+			}
+
+			Console.WriteLine($"There are {prevGrid.Where(q => q == '#').Count()} occupied seats");
+		}
+
+		[TestMethod]
+		public async Task RaytraceSeatFinderTask()
+		{
+			var input = await File.ReadAllTextAsync("Inputs/day11input.txt");
+
+			var prevGrid = input;
+			while (true)
+			{
+				var newGrid = RaytraceSeatFinder(prevGrid);
 				if (prevGrid == newGrid)
 				{
 					break;
